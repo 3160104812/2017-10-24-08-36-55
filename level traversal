@@ -1,0 +1,23 @@
+void Level_order ( Tree T, void (*visit)(Tree ThisNode) )
+{
+    Tree queue[MaxTree];
+    int front = -1;
+    int rear = 0;
+    if(!T)return;
+    queue[rear] = T;
+    while(front != rear)
+    {
+        front++;
+        visit(queue[front]);
+        if(queue[front] -> Left)
+        {
+            rear++;
+            queue[rear] = queue[front] -> Left;
+        }
+        if(queue[front] -> Right)
+        {
+            rear++;
+            queue[rear] = queue[front] -> Right;
+        }
+    }
+}
