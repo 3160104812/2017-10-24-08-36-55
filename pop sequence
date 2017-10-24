@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ERROR 0
+
+struct Node
+{
+    int StackSize;
+    int top;
+    int *stack;
+};
+typedef struct Node *PtrToNode;
+
+void sequence(int *input, PtrToNode S, int ArraySize );
+int push(int X, PtrToNode S);
+int pop(PtrToNode S);
+int IsFull(PtrToNode S);
+int IsEmpty(PtrToNode S);
+
+
+int main()
+{
+    int ArraySize;
+    int LoopTimes;//constant
+    int looptimes;//variable
+
+    PtrToNode S = (PtrToNode)malloc(sizeof(PtrToNode));//stack
+
+    scanf("%d %d %d", &S -> StackSize, &ArraySize, &LoopTimes);
+    S -> stack = (int *)malloc(sizeof(int) * (S -> StackSize + 1) );//dummy header
+
+    int *input = (int *)malloc(sizeof(int) * ArraySize );//input array
+
+    for(looptimes = 0; looptimes < LoopTimes; looptimes++)//iteration
+    {
+        int j;
+        int k; 
+        for(j = 0; j < ArraySize; j++)scanf("%d", &input[j]);//initialization
+        for(j = 0; j < ArraySize; j++)
+        {
+            if(input [j] > ArraySize)
+            {
+            	printf("NO");
+                    return 0;
+            }
+			for(k = j + 1; k < ArraySize; k++)
+            {
+                if(input [j] == input [k])
+                {
+                    printf("NO");
+                    return 0;
+                }
+            }
+        }//check if 2 input are same
+        S -> top = 0;//initialization
+        S -> stack[S -> top] = 0;//initialization
+        sequence(input, S, ArraySize);//YES or NO
+    }
+
+    return 0;
+}
+
+void sequence(int *input, PtrToNode S, int ArraySize )
+{
+    int step = 0;//search the input
+    int i = 0;
+    int Max_temp;
+    for(step = 0; step < ArraySize; step++ )
+    {
+        if(step == 0)
+        {
+        	
+            for(i = 1; i <= input[step]; i++)//from 1 to n
+            {
+                if(!push(i, S))
+                {
+                    printf("NO\n");
+                    return;
+                }
+            }
+            if(pop(S) != input[step])
+            {
+                printf("NO\n");
+                return;
+            }
+        }
+        else if(input[step] > input[step - 1])
+        {
+        	for(i = 0; i < step; i++ )
+        	{
+        		if(input [i] > input [i + 1])
+        		Max_temp = input[i];
+        		else Max_temp = input[i + 1];
+        	}//find the biggest pushed number
+            for(i = Max_temp ; i <= input[step]; i++)//from Max_temp+1 to n
+            {
+                if(!push(i, S))
+                {
+                    printf("NO\n");
+                    return;
+                }
+            }
+            if(pop(S) != input[step])
+            {
+                printf("NO\n");
+                return;
+            }
+        }
+        else if(input[step] < input[step - 1])
+        {
+            if(pop(S) != input[step])
+            {
+                printf("NO\n");
+                return;
+            }
+        }
+    }
+    printf("YES\n");
+    return;
+}
+
+int push(int X, PtrToNode S)
+{
+    if (IsFull(S))return ERROR;
+    S -> top ++;
+    S -> stack[S -> top] = X;
+    return 1;
+}
+
+int pop(PtrToNode S)
+{
+    if(IsEmpty(S))return ERROR;
+    int ret = 0;
+    ret = S -> stack[S -> top];
+    S -> top --;
+    return ret;
+}
+
+int IsFull(PtrToNode S)
+{
+    return(S -> top == S ->StackSize);
+}
+
+int IsEmpty(PtrToNode S)
+{
+    return(S -> top == 0);
+}
