@@ -1,0 +1,158 @@
+/*#include <stdio.h>
+#include <stdlib.h>
+#define ERROR 1e8
+typedef int ElementType;
+typedef enum { push, pop, end } Operation;
+
+typedef struct StackRecord *Stack;
+struct StackRecord  {
+    int Capacity;       //maximum size of the stack array
+    int Top1;           //top pointer for Stack 1 
+    int Top2;           //top pointer for Stack 2 
+    ElementType *Array; //space for the two stacks 
+};
+
+Stack CreateStack( int MaxElements );
+int IsEmpty( Stack S, int Stacknum );
+int IsFull( Stack S );
+int Push( ElementType X, Stack S, int Stacknum );
+ElementType Top_Pop( Stack S, int Stacknum );
+
+Operation GetOp();  // details omitted 
+void PrintStack( Stack S, int Stacknum ); // details omitted 
+
+int main()
+{
+    int N, Sn, X;
+    Stack S;
+    int done = 0;
+
+    scanf("%d", &N);
+    S = CreateStack(N);
+    while ( !done ) {
+        switch( GetOp() ) {
+        case push: 
+            scanf("%d %d", &Sn, &X);
+            if (!Push(X, S, Sn)) printf("Stack %d is Full!\n", Sn);
+            break;
+        case pop:
+            scanf("%d", &Sn);
+            X = Top_Pop(S, Sn);
+            if ( X==ERROR ) printf("Stack %d is Empty!\n", Sn);
+            break;
+        case end:
+            PrintStack(S, 1);
+            PrintStack(S, 2);
+            done = 1;
+            break;
+        }
+        printf("Array: ");
+		for(int i=0;i<S->Capacity;i++){
+        	printf("%d ", S->Array[i]);
+        }printf("\n");
+        printf("Top1:%d\n", S->Top1);
+        printf("Top2:%d\n", S->Top2);
+    }
+    return 0;
+}
+
+Operation GetOp(){
+	int x;
+	scanf("%d", &x);
+	if(x==0) return push;
+	if(x==1) return pop;
+	if(x==2) return end;
+}
+
+
+void PrintStack( Stack S, int Stacknum ){
+	int x;
+	if(Stacknum==1){
+		while(!IsEmpty(S,1)){
+			x=Top_Pop(S,1);
+			printf("%d ", x);
+		}printf("\n");
+	}
+	if(Stacknum==2){
+		while(!IsEmpty(S,2)){
+			x=Top_Pop(S,2);
+			printf("%d ", x);
+		}
+	}
+}
+----------*/
+
+
+
+Stack CreateStack( int MaxElements )
+{
+    int i;
+    Stack ptr;
+    ptr = (Stack)malloc(sizeof(struct StackRecord));
+   
+    ptr -> Array = (ElementType*)malloc(sizeof(ElementType) * MaxElements);
+    ptr -> Capacity = MaxElements;
+    ptr -> Top1 = -1;
+    ptr -> Top2 = MaxElements;
+    return ptr;
+}
+int IsEmpty( Stack S, int Stacknum )
+{
+    int is = 0;
+    switch(Stacknum)
+    {
+        case 1:
+        if(S -> Top1 == -1)
+        is = 1;
+        break;
+        case 2:
+        if(S -> Top2 == S -> Capacity)
+        is = 1;
+        break;
+    }
+    return is;
+}
+int IsFull( Stack S )
+{
+    return (S-> Top2 - S -> Top1 == 1);
+}
+int Push( ElementType X, Stack S, int Stacknum )
+{
+    int done = 0;
+    if(IsFull(S))return done;
+    switch(Stacknum)
+    {
+        case 1:
+        S -> Top1 ++;
+        S -> Array[S -> Top1] = X;
+        if(S -> Array[S -> Top1] == X)done = 1;
+        
+        break; 
+        
+        case 2:
+        S -> Top2 --;
+        S -> Array[S -> Top2] = X;
+        if(S -> Array[S -> Top2] == X)done = 1;
+        
+        break; 
+    }
+
+    return done;
+}
+ElementType Top_Pop( Stack S, int Stacknum )
+{
+    ElementType ret;
+    if(IsEmpty(S, Stacknum))return ERROR;
+    switch(Stacknum)
+    {
+        case 1:
+        ret = S -> Array[S -> Top1];
+        S -> Top1 --;
+        break;
+        case 2:
+        ret = S -> Array[S -> Top2];
+        S -> Top2 ++;
+        break;
+    }
+    return ret;
+}
